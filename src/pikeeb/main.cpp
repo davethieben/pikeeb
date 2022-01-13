@@ -1,5 +1,6 @@
 ﻿#include <stdio.h>
 
+#include "HidKeyboard.h"
 #include "PiMatrix.h"
 
 using namespace std;
@@ -44,7 +45,10 @@ int main()
 	matrix.AddMapping(1, 2, '2');
 	matrix.AddMapping(2, 2, '3');
 
-	matrix.Run();
+	//matrix.Run();
+
+	HidKeyboard kb("/dev/hidg0");
+	kb.Send("hello c++ kb");
 
 	return 0;
 }
