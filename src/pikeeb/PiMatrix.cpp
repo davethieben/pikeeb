@@ -36,20 +36,23 @@ void PiMatrix::AddRow(int bcmPinNumber)
 
 void PiMatrix::AddMapping(int col, int row, map_t mapped)
 {
+    //printf("PiMatrix AddMapping: %d, %d = %c \n", col, row, mapped );
+
     while (col >= _layout.size())
     {
         vector<map_t> newcol;
         _layout.push_back(newcol);
     }
 
-    vector<map_t> colmap = _layout[col];
-    while(row >= colmap.size())
+    vector<map_t> *colmap = &_layout[col];
+    while(row >= colmap->size())
     {
         map_t newrow;
-        colmap.push_back(newrow);
+        colmap->push_back(newrow);
     }
 
-    _layout[col][row] = mapped;
+    _layout.at(col).at(row) = mapped;
+    //printf("PiMatrix AddMapping done \n");
 }
 // TODO - AddMapping(col, row, char[] output) => _layout[col][row] = (delegate)(() => { hid_send(output); });
 

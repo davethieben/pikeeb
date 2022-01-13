@@ -17,7 +17,10 @@ using namespace std;
 
 int main()
 {
+	printf("pikeeb starting \n");
+
 	PiMatrix matrix;
+
 	matrix.AddColumn(COL0);
 	matrix.AddColumn(COL1);
 	matrix.AddColumn(COL2);

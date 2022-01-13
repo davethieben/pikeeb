@@ -6,7 +6,8 @@ using namespace std;
 typedef char 	map_t;
 // TODO - typedef - struct { char[] send_chars, delegate* handler } n
 
-class PiMatrix {
+class PiMatrix 
+{
 
     vector<int> _rows;
     vector<int> _cols;
