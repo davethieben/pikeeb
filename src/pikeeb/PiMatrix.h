@@ -1,29 +1,39 @@
 #pragma once
 #include <vector>
+#include "Event.cpp"
 
 using namespace std;
 
-typedef char 	map_t;
-// TODO - typedef - struct { char[] send_chars, delegate* handler } n
+struct key_event_args {
+    pair<int, int> position;
+    bool pressed;
+};
 
-class PiMatrix 
+typedef function<void(key_event_args)> key_event_handler;
+
+struct key_map {
+    pair<int, int> position;
+    key_event_handler handler;
+};
+
+class PiMatrix
 {
 
     vector<int> _rows;
     vector<int> _cols;
-
-    vector<vector<map_t>> _layout;
+    
+    list<key_map> _keyMaps;
 
 public:
     PiMatrix();
 
     void AddColumn(int bcmPinNumber);
     void AddRow(int bcmPinNumber);
-    void AddMapping(int col, int row, map_t mapped);
+    void AddMapping(int col, int row, key_event_handler handler);
 
     void Run();
 
-private: 
+private:
 
     void SetRow(int rowIndex, int state);
     void OnKeyChange(int colIndex, int rowIndex, bool isDown);

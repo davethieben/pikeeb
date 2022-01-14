@@ -34,27 +34,10 @@ void PiMatrix::AddRow(int bcmPinNumber)
     digitalWrite(bcmPinNumber, LOW);
 }
 
-void PiMatrix::AddMapping(int col, int row, map_t mapped)
+void PiMatrix::AddMapping(int col, int row, key_event_handler handler)
 {
-    //printf("PiMatrix AddMapping: %d, %d = %c \n", col, row, mapped );
-
-    while (col >= _layout.size())
-    {
-        vector<map_t> newcol;
-        _layout.push_back(newcol);
-    }
-
-    vector<map_t> *colmap = &_layout[col];
-    while(row >= colmap->size())
-    {
-        map_t newrow;
-        colmap->push_back(newrow);
-    }
-
-    _layout.at(col).at(row) = mapped;
-    //printf("PiMatrix AddMapping done \n");
+    _keyMaps.push_back({ make_pair(col, row), handler });
 }
-// TODO - AddMapping(col, row, char[] output) => _layout[col][row] = (delegate)(() => { hid_send(output); });
 
 void PiMatrix::Run()
 {
@@ -108,8 +91,14 @@ void PiMatrix::SetRow(int rowIndex, int state)
 
 void PiMatrix::OnKeyChange(int colIndex, int rowIndex, bool isDown)
 {
-    map_t keycode = _layout[colIndex][rowIndex];
+    //printf("PiMatrix Key %s: %d, %d \n", (isDown ? "Down" : " Up "), colIndex, rowIndex);
 
-    printf("Key %s: %d, %d - Key Code: %d \n", (isDown ? "Down" : " Up "), colIndex, rowIndex, keycode);
+    for (key_map map : _keyMaps)
+    {
+        if (map.position.first == colIndex && map.position.second == rowIndex)
+        {
+            map.handler({ make_pair(colIndex, rowIndex), isDown });
+        }
+    }
 
 }

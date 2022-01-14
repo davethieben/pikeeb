@@ -5,50 +5,87 @@
 
 using namespace std;
 
-#define COL0 10
-#define COL1 9
-#define COL2 11
+#define COL0	10		//	SPMOSI		// grey
+#define COL1	9		//	SPMISO		// yellow
+#define COL2	11		//	SPCLK		// purple
 
-#define ROW0 5
-#define ROW1 6
-#define ROW2 13
+#define ROW0	5		//	GPIO5		// green
+#define ROW1	6		//	GPIO6		// red
+#define ROW2	13		//	GPIO13		// blue
 
-#define LED0 23
-#define LED1 24
+#define LED0	23		//	GPIO23
+#define LED1	24		//	GPIO24
+
 
 int main()
 {
-	printf("pikeeb starting \n");
+    printf("pikeeb starting \n");
 
-	PiMatrix matrix;
+    PiMatrix matrix;
 
-	matrix.AddColumn(COL0);
-	matrix.AddColumn(COL1);
-	matrix.AddColumn(COL2);
+    matrix.AddColumn(COL0);
+    matrix.AddColumn(COL1);
+    matrix.AddColumn(COL2);
 
-	matrix.AddRow(ROW0);
-	matrix.AddRow(ROW1);
-	matrix.AddRow(ROW2);
+    matrix.AddRow(ROW0);
+    matrix.AddRow(ROW1);
+    matrix.AddRow(ROW2);
 
-	// row 0:
-	matrix.AddMapping(0, 0, '7');
-	matrix.AddMapping(1, 0, '8');
-	matrix.AddMapping(2, 0, '9');
+    HidKeyboard kb("/dev/hidg0");
+    //kb.Send("hello c++ kb");
 
-	// row 1:
-	matrix.AddMapping(0, 1, '4');
-	matrix.AddMapping(1, 1, '5');
-	matrix.AddMapping(2, 1, '6');
+    // row 0:   
+    matrix.AddMapping(0, 0, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("7");
+        });
+    matrix.AddMapping(1, 0, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("8");
+        });
+    matrix.AddMapping(2, 0, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("9");
+        });
 
-	// row 2:
-	matrix.AddMapping(0, 2, '1');
-	matrix.AddMapping(1, 2, '2');
-	matrix.AddMapping(2, 2, '3');
+    // row 1:
+    matrix.AddMapping(0, 1, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("4");
+        });
+    matrix.AddMapping(1, 1, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("5");
+        });
+    matrix.AddMapping(2, 1, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("6");
+        });
 
-	//matrix.Run();
+    // row 2:
+    matrix.AddMapping(0, 2, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("1");
+        });
+    matrix.AddMapping(1, 2, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("2");
+        });
+    matrix.AddMapping(2, 2, [&kb](key_event_args args) -> void
+        {
+            if (args.pressed)
+                kb.Send("3");
+        });
 
-	HidKeyboard kb("/dev/hidg0");
-	kb.Send("hello c++ kb");
 
-	return 0;
+    matrix.Run();
+    return 0;
 }
