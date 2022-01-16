@@ -7,3 +7,5 @@ project ("pikeeb")
 
 # Include sub-projects.
 add_subdirectory ("pikeeb")
+
+add_compile_definitions(DEBUG)

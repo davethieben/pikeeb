@@ -1,7 +1,10 @@
 ﻿#include <stdio.h>
 
+#include "debug.h"
 #include "HidKeyboard.h"
 #include "PiMatrix.h"
+#include "PiLights.h"
+#include "UsbHidKeys.h"
 
 using namespace std;
 
@@ -19,9 +22,10 @@ using namespace std;
 
 int main()
 {
-    printf("pikeeb starting \n");
+    dprintf("pikeeb starting \n");
 
     PiMatrix matrix;
+    PiLights lights;
 
     matrix.AddColumn(COL0);
     matrix.AddColumn(COL1);
@@ -33,6 +37,13 @@ int main()
 
     HidKeyboard kb("/dev/hidg0");
     //kb.Send("hello c++ kb");
+
+    // indicate button presses w/ LED:
+    matrix.AddMapping([](position_t pos) -> bool { return true; },
+        [&lights](key_event_args args) -> void {
+            if (args.pressed) lights.Enable(LED0);
+            else lights.Disable(LED0);
+        });
 
     // row 0:   
     matrix.AddMapping(0, 0, [&kb](key_event_args args) -> void
@@ -55,7 +66,8 @@ int main()
     matrix.AddMapping(0, 1, [&kb](key_event_args args) -> void
         {
             if (args.pressed)
-                kb.Send("4");
+                //kb.Send("4");
+                kb.Send(KEY_KP4);
         });
     matrix.AddMapping(1, 1, [&kb](key_event_args args) -> void
         {

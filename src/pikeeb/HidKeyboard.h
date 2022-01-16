@@ -9,6 +9,7 @@ class HidKeyboard
 
 public:
     HidKeyboard(string deviceFilename);
+    void Send(int data);
     void Send(string data);
 
 };

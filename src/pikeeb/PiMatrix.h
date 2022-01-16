@@ -4,21 +4,22 @@
 
 using namespace std;
 
+typedef pair<unsigned short, unsigned short> position_t;
+typedef function<bool(position_t)> key_event_predicate;
+typedef function<void(key_event_args)> key_event_handler;
+
 struct key_event_args {
-    pair<int, int> position;
+    position_t position;
     bool pressed;
 };
 
-typedef function<void(key_event_args)> key_event_handler;
-
 struct key_map {
-    pair<int, int> position;
+    key_event_predicate predicate;
     key_event_handler handler;
 };
 
 class PiMatrix
 {
-
     vector<int> _rows;
     vector<int> _cols;
     
@@ -29,6 +30,7 @@ public:
 
     void AddColumn(int bcmPinNumber);
     void AddRow(int bcmPinNumber);
+    void AddMapping(key_event_predicate predicate, key_event_handler handler);
     void AddMapping(int col, int row, key_event_handler handler);
 
     void Run();

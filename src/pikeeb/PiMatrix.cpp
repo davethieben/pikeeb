@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <wiringPi.h>
 
+#include "debug.h"
 #include "PiMatrix.h"
 
 using namespace std;
@@ -34,9 +35,19 @@ void PiMatrix::AddRow(int bcmPinNumber)
     digitalWrite(bcmPinNumber, LOW);
 }
 
+void PiMatrix::AddMapping(key_event_predicate predicate, key_event_handler handler)
+{
+    _keyMaps.push_back({ predicate, handler });
+}
+
 void PiMatrix::AddMapping(int col, int row, key_event_handler handler)
 {
-    _keyMaps.push_back({ make_pair(col, row), handler });
+    key_event_predicate predicate = [col,row](position_t position) -> bool
+    {
+        return (position.first == col && position.second == row);
+    };
+
+    _keyMaps.push_back({ predicate, handler });
 }
 
 void PiMatrix::Run()
@@ -91,13 +102,14 @@ void PiMatrix::SetRow(int rowIndex, int state)
 
 void PiMatrix::OnKeyChange(int colIndex, int rowIndex, bool isDown)
 {
-    //printf("PiMatrix Key %s: %d, %d \n", (isDown ? "Down" : " Up "), colIndex, rowIndex);
+    dprintf("PiMatrix Key %s: %d, %d \n", (isDown ? "Down" : " Up "), colIndex, rowIndex);
 
     for (key_map map : _keyMaps)
     {
-        if (map.position.first == colIndex && map.position.second == rowIndex)
+        position_t position = make_pair(colIndex, rowIndex);
+        if(map.predicate(position))
         {
-            map.handler({ make_pair(colIndex, rowIndex), isDown });
+            map.handler({ position, isDown });
         }
     }
 
